@@ -457,7 +457,7 @@ class GLADS(object):
         C_c = A*S*abs(N)**(n-1)*Max(N,1000)
 
         # hydropotential residual
-        R_phi = (xsi*e_v/(rho_w*g)*(phi-phi0)/dt - df.dot(df.grad(xsi),q) - xsi*(m + C - O - k_e*Max(phi-self.phi_m-rho_w/rho_i*self.P_0,0)))*df.dx + df.avg(-dxsids*Q + xsi*(Chi - Pi)/La*(1./rho_i - 1/rho_w) - xsi*C_c)*df.dS
+        R_phi = (xsi*e_v/(rho_w*g)*(phi-phi0)/dt - df.dot(df.grad(xsi),q) - xsi*(m + C - O - k_e*Max(phi-self.phi_m-rho_w/rho_i*self.P_0,0)))*df.dx + df.avg(-dxsids*Q + xsi*(Chi - Pi)/La*(1./rho_i - 1/rho_w) - xsi*C_c)*df.dS(metadata={'quadrature_degree':1})
         
         # Cavity residual
         R_h = ((h - h0)/dt - O + C)*psi*df.dx 
@@ -690,7 +690,7 @@ while t<t_end:
 
         # Update time step
         hydro.dt.assign(min(hydro.dt(0)*timestep_increase_fraction,dt_max))
-    except IndexError:
+    except RuntimeError:
         # If solver fails, try again with a smaller time step
         hydro.dt.assign(hydro.dt(0)*timestep_reduction_fraction)
         print('Convergence not achieved.  Reducing time step to {0} and trying again'.format(hydro.dt(0)))
